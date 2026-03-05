@@ -10,5 +10,5 @@ class User(AbstractUser):
         return f'{self.email}, {self.first_name}, {self.last_name}'
 
 
-class Order(models.Model):
+class Post(models.Model):
     name = models.CharField(max_length=500)

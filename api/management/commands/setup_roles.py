@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.management import BaseCommand
 from django.contrib.auth import get_user_model
 
-from api.models import Order
+from api.models import Post
 from dotenv import load_dotenv
 from pathlib import Path
 import os
@@ -18,30 +18,30 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         User = get_user_model()
 
-        order_ct = ContentType.objects.get_for_model(Order)
+        post_ct = ContentType.objects.get_for_model(Post)
         user_ct = ContentType.objects.get_for_model(User)
         perms = {
-            "Order.view": Permission.objects.get(codename="view_order", content_type=order_ct),
-            "Order.change": Permission.objects.get(codename="change_order", content_type=order_ct),
-            "Order.delete": Permission.objects.get(codename="delete_order", content_type=order_ct),
-            "Order.add": Permission.objects.get(codename="add_order", content_type=order_ct),
+            "Post.view": Permission.objects.get(codename="view_post", content_type=post_ct),
+            "Post.change": Permission.objects.get(codename="change_post", content_type=post_ct),
+            "Post.delete": Permission.objects.get(codename="delete_post", content_type=post_ct),
+            "Post.add": Permission.objects.get(codename="add_post", content_type=post_ct),
             "User.change": Permission.objects.get(codename="change_user", content_type=user_ct),
         }
 
         role_map={
             "Admin": list(perms.values()),
             "Manager": [
-                perms["Order.view"],
-                perms["Order.change"],
-                perms["Order.add"],
+                perms["Post.view"],
+                perms["Post.change"],
+                perms["Post.add"],
                 perms["User.change"],
             ],
             "User":[
-                perms["Order.view"],
-                perms["Order.add"]
+                perms["Post.view"],
+                perms["Post.add"]
             ],
             "Guest":[
-                perms["Order.view"],
+                perms["Post.view"],
             ]
         }
 
@@ -53,7 +53,8 @@ class Command(BaseCommand):
 
         admin_username="admin"
         admin_email="admin@example.com"
-        admin_password=os.getenv("PASSWORD")
+        admin_password="password"
+        # admin_password=os.getenv("PASSWORD")
         self.stdout.write(self.style.SUCCESS(f"password: {admin_password}"))
 
         admin_user, created = User.objects.get_or_create(username=admin_username, email=admin_email)
